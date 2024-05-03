@@ -1,19 +1,27 @@
-#!/usr/bin/python3
-from fabric.api import local
-from time import strftime
-from datetime import date
+#!/usr/bin/env bash
+# script that sets up web servers for the deployment of web_static
+sudo apt-get update
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
 
+sudo mkdir -p /data/
+sudo mkdir -p /data/web_static/
+sudo mkdir -p /data/web_static/releases/
+sudo mkdir -p /data/web_static/shared/
+sudo mkdir -p /data/web_static/releases/test/
+sudo touch /data/web_static/releases/test/index.html
+sudo echo "<html>
+  <head>
+  </head>
+  <body>
+    Holberton School
+  </body>
+</html>" | sudo tee /data/web_static/releases/test/index.html
 
-def do_pack():
-    """ A script that generates archive the contents of web_static folder"""
+sudo ln -s -f /data/web_static/releases/test/ /data/web_static/current
 
-    filename = strftime("%Y%m%d%H%M%S")
-    try:
-        local("mkdir -p versions")
-        local("tar -czvf versions/web_static_{}.tgz web_static/"
-              .format(filename))
+sudo chown -R ubuntu:ubuntu /data/
 
-        return "versions/web_static_{}.tgz".format(filename)
+sudo sed -i '/listen 80 default_server/a location /hbnb_static { alias /data/web_static/current/;}' /etc/nginx/sites-enabled/default
 
-    except Exception as e:
-        return None
+sudo service nginx restart
