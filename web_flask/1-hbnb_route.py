@@ -1,24 +1,24 @@
 #!/usr/bin/python3
-""" Write a script that starts a Flask web application:
-Your web application must be listening on 0.0.0.0, port 5000
+"""Start web application with two routings
 """
 
 from flask import Flask
+app = Flask(__name__)
 
-app = Flask("__name__")
 
-
-@app.route('/', strict_slashes=False)
+@app.route('/')
 def hello():
-    """Return a given string"""
-    return ("Hello HBNB!")
+    """Return string when route queried
+    """
+    return 'Hello HBNB!'
 
 
-@app.route("/hbnb", strict_slashes=False)
+@app.route('/hbnb')
 def hbnb():
-    """Returns a given string"""
-    return ("HBNB")
+    """Return string when route queried
+    """
+    return 'HBNB'
 
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=None)
+if __name__ == '__main__':
+    app.url_map.strict_slashes = False
+    app.run(host='0.0.0.0', port=5000)
